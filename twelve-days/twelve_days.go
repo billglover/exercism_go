@@ -8,7 +8,7 @@ const testVersion = 1
 // per line
 func Song() (song string) {
 	for v := 1; v <= 12; v++ {
-		song = fmt.Sprintf("%s%s\n", song, Verse(v))
+		song += fmt.Sprintf("%s\n", Verse(v))
 	}
 	return song
 }
