@@ -4,7 +4,11 @@ const testVersion = 2
 
 func All(n int, s string) (series []string) {
 	for i := 0; i < len(s) && i+n <= len(s); i++ {
-		series = append(series, s[i:i+n])
+		ns, ok := First(n, s[i:])
+		if ok == false {
+			return nil
+		}
+		series = append(series, ns)
 	}
 
 	return series
