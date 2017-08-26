@@ -14,6 +14,18 @@ var letterScores = map[int][]rune{
 	10: {'Q', 'Z'},
 }
 
+var scoreMap = make(map[rune]int, 26)
+
+func init() {
+
+	// create a more efficient representation of our letter scores
+	for s, letters := range letterScores {
+		for _, l := range letters {
+			scoreMap[l] = s
+		}
+	}
+}
+
 // Score reutrns the Scrabble score for a given word. Invalid
 // characters and whitespace will be treated as scoring 0.
 func Score(w string) (score int) {
@@ -21,17 +33,10 @@ func Score(w string) (score int) {
 	w = strings.ToUpper(w)
 
 	for _, c := range w {
-
-	ScoreLoop:
-		for s, letters := range letterScores {
-			for _, l := range letters {
-				if l == c {
-					score += s
-					break ScoreLoop
-				}
-			}
+		i, ok := scoreMap[c]
+		if ok {
+			score += i
 		}
-
 	}
 
 	return score
