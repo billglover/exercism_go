@@ -22,12 +22,3 @@ func Square(n int) (g uint64, err error) {
 
 	return 1 << uint(n-1), nil
 }
-
-func cSquare(n int) (tg, cg uint64) {
-	if n == 1 {
-		return 1, 1
-	}
-
-	tg, cg = cSquare(n - 1)
-	return 2 * tg, cg + 2*tg
-}
