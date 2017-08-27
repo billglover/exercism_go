@@ -7,7 +7,7 @@ const testVersion = 1
 func ConcurrentFrequency(strings []string) FreqMap {
 
 	m := FreqMap{}
-	results := make(chan FreqMap)
+	results := make(chan FreqMap, len(strings))
 
 	for _, part := range strings {
 		go func(s string) {
@@ -15,7 +15,7 @@ func ConcurrentFrequency(strings []string) FreqMap {
 		}(part)
 	}
 
-	for r := 3; r > 0; r-- {
+	for r := len(strings); r > 0; r-- {
 		f := <-results
 		for l := range f {
 			m[l] += f[l]
