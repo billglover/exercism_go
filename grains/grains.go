@@ -9,11 +9,6 @@ const testVersion = 1
 // Total returns the total number of grains on a chess board if the
 // number of grains on each square doubles
 func Total() (g uint64) {
-	// for n := 1; n <= 64; n++ {
-	// 	sg, _ := Square(n)
-	// 	g += sg
-	// }
-	// return g
 	_, g = cSquare(64)
 	return g
 }
