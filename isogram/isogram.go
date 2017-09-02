@@ -12,12 +12,10 @@ func IsIsogram(s string) bool {
 
 	for _, l := range a {
 		r := unicode.ToLower(l)
-		if unicode.IsLetter(r) {
-			if ok := m[r]; ok == true {
-				return false
-			}
-			m[r] = true
+		if unicode.IsLetter(r) && m[r] {
+			return false
 		}
+		m[r] = true
 	}
 
 	return true
