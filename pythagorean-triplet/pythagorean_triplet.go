@@ -15,7 +15,8 @@ func Range(min, max int) (ts []Triplet) {
 	for a := min; a <= max; a++ {
 		for b := a; b <= max; b++ {
 			c := math.Sqrt(float64(a*a + b*b))
-			if c == math.Trunc(c) && int(c) <= max {
+			ci := int(c)
+			if c == float64(ci) && ci <= max {
 				ts = append(ts, Triplet{a, b, int(c)})
 			}
 		}
