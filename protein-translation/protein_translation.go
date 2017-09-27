@@ -65,7 +65,7 @@ type stateFn func(*lexer) stateFn
 // run lexes the input by executing state functions
 // until the state is nil.
 func (l *lexer) run() {
-	for state := lexText; state != nil; {
+	for state := lexCodon; state != nil; {
 		state = state(l)
 	}
 	close(l.items)
@@ -81,9 +81,10 @@ type lexer struct {
 	items chan item // channel of scanned items.
 }
 
-func lex(name, input string) (*lexer, chan item) {
+// lex takes a string and returns a channel of items.
+// It then runs the lexer over the string.
+func lex(input string) (*lexer, chan item) {
 	l := &lexer{
-		name:  name,
 		input: input,
 		items: make(chan item),
 	}
@@ -97,17 +98,20 @@ func (l *lexer) emit(t itemType) {
 	l.start = l.pos
 }
 
-func lexText(l *lexer) stateFn {
+// lexCodon looks for a codon at the current lexer position.
+// It returns a state function frepresenting the current 
+// state of the lexer.
+func lexCodon(l *lexer) stateFn {
 	for {
 		if l.pos >= l.start+3 {
 			c := FromCodon(l.input[l.start:l.pos])
 			if c == "STOP" {
-				l.emit(itemEOF)
+				l.emit(itemStop)
 				return nil
 			}
 
 			l.emit(itemCodon)
-			return lexText
+			return lexCodon
 		}
 
 		if l.next() == eof {
@@ -123,6 +127,8 @@ func lexText(l *lexer) stateFn {
 	return nil
 }
 
+// next is a helper function that consumes the next rune in 
+// the string and advances the lexer position accordingly.
 func (l *lexer) next() (r rune) {
 	if l.pos >= len(l.input) {
 		l.width = 0
@@ -133,22 +139,25 @@ func (l *lexer) next() (r rune) {
 	return r
 }
 
+// FromCodon translates a codon into the name of its corresponding 
+// protein.
 func FromCodon(codon string) (p string) {
 	p, _ = codons[codon]
 	return p
 }
 
+// FromRNA runs the lexer over an RNA string and returns an array
+// of proteins.
 func FromRNA(rna string) (p []string) {
-	_, ch := lex("demo", rna)
+	_, ch := lex(rna)
 
 	for {
 		select {
-		case s := <-ch:
-			fmt.Printf("%s\n", s)
-			p = append(p, codons[s.val])
-			if s.typ == itemEOF {
+		case s := <-ch:			
+			if s.typ == itemEOF || s.typ == itemStop {
 				return p
 			}
+			p = append(p, codons[s.val])
 		}
 	}
 
