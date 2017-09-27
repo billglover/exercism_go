@@ -99,7 +99,7 @@ func (l *lexer) emit(t itemType) {
 }
 
 // lexCodon looks for a codon at the current lexer position.
-// It returns a state function frepresenting the current 
+// It returns a state function frepresenting the current
 // state of the lexer.
 func lexCodon(l *lexer) stateFn {
 	for {
@@ -127,7 +127,7 @@ func lexCodon(l *lexer) stateFn {
 	return nil
 }
 
-// next is a helper function that consumes the next rune in 
+// next is a helper function that consumes the next rune in
 // the string and advances the lexer position accordingly.
 func (l *lexer) next() (r rune) {
 	if l.pos >= len(l.input) {
@@ -139,7 +139,7 @@ func (l *lexer) next() (r rune) {
 	return r
 }
 
-// FromCodon translates a codon into the name of its corresponding 
+// FromCodon translates a codon into the name of its corresponding
 // protein.
 func FromCodon(codon string) (p string) {
 	p, _ = codons[codon]
@@ -153,7 +153,7 @@ func FromRNA(rna string) (p []string) {
 
 	for {
 		select {
-		case s := <-ch:			
+		case s := <-ch:
 			if s.typ == itemEOF || s.typ == itemStop {
 				return p
 			}
