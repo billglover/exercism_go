@@ -11,8 +11,9 @@ var nucleotides = map[rune]rune{
 
 // ToRNA takes a DNA strand and returns its RNA complement
 func ToRNA(dna string) (rna string) {
-	for _, n := range dna {
-		rna += string(nucleotides[n])
+	r := make([]rune, len(dna))
+	for i, n := range dna {
+		r[i] = nucleotides[n]
 	}
-	return rna
+	return string(r)
 }
