@@ -19,8 +19,10 @@ type Reactor interface {
 
 // A Cell is conceptually a holder of a value.
 type Cell interface {
+
 	// Value returns the current value of the cell.
 	Value() int
+	Subscribe(chan int)
 }
 
 // An InputCell has a changeable value, changing the value triggers updates to
