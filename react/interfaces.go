@@ -22,7 +22,7 @@ type Cell interface {
 
 	// Value returns the current value of the cell.
 	Value() int
-	Subscribe(chan int)
+	Subscribe(Callback)
 }
 
 // An InputCell has a changeable value, changing the value triggers updates to
