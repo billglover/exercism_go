@@ -5,7 +5,7 @@ import "fmt"
 // C represents a cell.
 type C struct {
 	v         int
-	callbacks []Callback
+	notifyChs []chan interface{}
 }
 
 // Value returns the value in a cell.
@@ -20,21 +20,16 @@ func (c *C) SetValue(v int) {
 
 	if c.Value() != v {
 		c.v = v
-		for _, cb := range c.callbacks {
-			cc := cb.cc
-			fmt.Println(cc)
-			if cc.Value() != cb.oldValue {
-				fmt.Println("calling callback:", cc.Value())
-				cb.f(cc.Value())
-				cb.oldValue = cc.Value()
-			}
+		for _, cb := range c.notifyChs {
+			fmt.Println("notifying:", true)
+			cb <- true
 		}
 	}
 	c.v = v
 }
 
-// Subscribe registers a channel for subscription updates
-func (c *C) Subscribe(cb Callback) {
-	fmt.Println("storing callback in input cell")
-	c.callbacks = append(c.callbacks, cb)
+func (c *C) Register() chan interface{} {
+	ch := make(chan interface{})
+	c.notifyChs = append(c.notifyChs, ch)
+	return ch
 }

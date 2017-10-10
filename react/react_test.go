@@ -1,6 +1,7 @@
 package react
 
 import (
+	"fmt"
 	"runtime"
 	"testing"
 )
@@ -124,10 +125,12 @@ func TestBasicCallback(t *testing.T) {
 	c.AddCallback(func(v int) {
 		observed = append(observed, v)
 	})
+	fmt.Println("observed:", len(observed))
 	if len(observed) != 0 {
 		t.Fatalf("callback called before changes were made")
 	}
 	i.SetValue(2)
+	fmt.Println("observed:", len(observed))
 	if len(observed) != 1 {
 		t.Fatalf("callback not called when changes were made")
 	}
