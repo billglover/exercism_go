@@ -104,12 +104,19 @@ func merge(cs ...<-chan chan interface{}) <-chan chan interface{} {
 	return out
 }
 
+type CB struct{}
+
+func (cb CB) Cancel() {
+	fmt.Println("TODO: cancel callback")
+}
+
 // AddCallback is a stub function and needs to be updated
 func (u *Unit) AddCallback(f func(int)) Canceler {
 	fmt.Println("current callbacks:", len(u.subs))
 	u.subs = append(u.subs, f)
 	fmt.Println("current callbacks:", len(u.subs))
-	return nil
+	cb := CB{}
+	return cb
 }
 
 func (u *Unit) Register() chan chan interface{} {
