@@ -12,16 +12,17 @@ type Unit struct {
 	fn        func() int  // stores the computed function
 	subs      []func(int) // stores a list of callbacks
 	val       int         // stores the current value
-	notifyChs []chan interface{}
+	notifyChs []chan chan interface{}
 }
 
 // Init initialises a unit of computation by providing it
 // a function to compute and one or more notification
 // channels on which it can receive change notifications.
 // It also takes a context to allow cancelation.
-func (u *Unit) Init(ctx context.Context, f func() int, updates ...<-chan interface{}) {
+func (u *Unit) Init(ctx context.Context, f func() int, updates ...<-chan chan interface{}) {
 	fmt.Println("starting compute unit")
 	u.fn = f
+	u.val = u.fn()
 
 	fmt.Println("updates to be monitored:", len(updates))
 
@@ -35,9 +36,12 @@ func (u *Unit) Init(ctx context.Context, f func() int, updates ...<-chan interfa
 			case <-ctx.Done():
 				fmt.Println("terminating compute unit")
 				return
-			case <-notify:
+			case done := <-notify:
 				fmt.Println("notification recieved")
-				u.doCallbacks()
+				if u.val != u.fn() {
+					u.doCallbacks()
+				}
+				done <- true
 			}
 		}
 	}()
@@ -58,9 +62,9 @@ func (u *Unit) doCallbacks() {
 // its stored function.
 func (u *Unit) Value() int {
 	if u.val != u.fn() {
-		//fmt.Println("send notification that value has changed")
-		u.val = u.fn()
+		fmt.Printf("TODO: notification that value has changed: %d -> %d\n", u.val, u.fn())
 	}
+	u.val = u.fn()
 	return u.val
 }
 
@@ -72,14 +76,14 @@ func (u *Unit) Value() int {
 // outbound channel after all sends on that channel are
 // done.
 // Source: https://blog.golang.org/pipelines
-func merge(cs ...<-chan interface{}) <-chan interface{} {
+func merge(cs ...<-chan chan interface{}) <-chan chan interface{} {
 	var wg sync.WaitGroup
-	out := make(chan interface{})
+	out := make(chan chan interface{})
 
 	// Start an output goroutine for each input channel in
 	// cs.  output copies values from c to out until c is
 	// closed, then calls wg.Done.
-	output := func(c <-chan interface{}) {
+	output := func(c <-chan chan interface{}) {
 		for n := range c {
 			out <- n
 		}
@@ -108,8 +112,8 @@ func (u *Unit) AddCallback(f func(int)) Canceler {
 	return nil
 }
 
-func (u *Unit) Register() chan interface{} {
-	ch := make(chan interface{})
+func (u *Unit) Register() chan chan interface{} {
+	ch := make(chan chan interface{})
 	u.notifyChs = append(u.notifyChs, ch)
 	return ch
 }
