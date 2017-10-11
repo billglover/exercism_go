@@ -9,10 +9,10 @@ import (
 // Unit represents a single compute unit, holding a
 // function and one or more callbacks.
 type Unit struct {
-	fn        func() int  // stores the computed function
-	subs      []func(int) // stores a list of callbacks
-	val       int         // stores the current value
-	notifyChs []chan chan interface{}
+	fn          func() int   // stores the computed function
+	subscribers map[*CB]bool // stores pointers to callback functions
+	val         int          // stores the current value
+	notifyChs   []chan chan interface{}
 }
 
 // Init initialises a unit of computation by providing it
@@ -23,6 +23,7 @@ func (u *Unit) Init(ctx context.Context, f func() int, updates ...<-chan chan in
 	fmt.Println("starting compute unit")
 	u.fn = f
 	u.val = u.fn()
+	u.subscribers = make(map[*CB]bool, 0)
 
 	fmt.Println("updates to be monitored:", len(updates))
 
@@ -50,11 +51,11 @@ func (u *Unit) Init(ctx context.Context, f func() int, updates ...<-chan chan in
 // doCallbacks executes all callback functions currently
 // registered with this compute unit.
 func (u *Unit) doCallbacks() {
-	fmt.Println("current callbacks:", len(u.subs))
-	for i, cb := range u.subs {
-		fmt.Println("callback:", i, u.Value())
-		cb(u.Value())
-		fmt.Println("callback:", i, "called")
+	fmt.Println("current callbacks:", len(u.subscribers))
+	for cb := range u.subscribers {
+		fmt.Println("callback:", u.Value())
+		cb.fn(u.Value())
+		fmt.Println("callback:", "called")
 	}
 }
 
@@ -104,18 +105,25 @@ func merge(cs ...<-chan chan interface{}) <-chan chan interface{} {
 	return out
 }
 
-type CB struct{}
+type CB struct {
+	fn     func(int)
+	cancel func()
+}
 
 func (cb CB) Cancel() {
 	fmt.Println("TODO: cancel callback")
+	cb.cancel()
 }
 
 // AddCallback is a stub function and needs to be updated
 func (u *Unit) AddCallback(f func(int)) Canceler {
-	fmt.Println("current callbacks:", len(u.subs))
-	u.subs = append(u.subs, f)
-	fmt.Println("current callbacks:", len(u.subs))
 	cb := CB{}
+	cb.fn = f
+	cb.cancel = func() {
+		fmt.Println("cancelling 1 of", len(u.subscribers))
+		delete(u.subscribers, &cb)
+	}
+	u.subscribers[&cb] = true
 	return cb
 }
 
