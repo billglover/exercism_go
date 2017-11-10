@@ -33,7 +33,12 @@ func Subset(s1, s2 Set) bool {
 }
 
 func Disjoint(s1, s2 Set) bool {
-	return false
+	for k := range s1 {
+		if ok := s2[k]; ok == true {
+			return false
+		}
+	}
+	return true
 }
 
 func Equal(s1, s2 Set) bool {
