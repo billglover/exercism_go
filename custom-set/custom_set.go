@@ -59,7 +59,15 @@ func Intersection(s1, s2 Set) Set {
 }
 
 func Difference(s1, s2 Set) Set {
-	return nil
+	ds := Set{}
+
+	for k := range s1 {
+		if ok := s2[k]; ok == false {
+			ds[k] = true
+		}
+	}
+
+	return ds
 }
 
 func Union(s1, s2 Set) Set {
