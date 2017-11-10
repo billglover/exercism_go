@@ -1,6 +1,7 @@
 package stringset
 
 import (
+	"reflect"
 	"strings"
 )
 
@@ -42,7 +43,7 @@ func Disjoint(s1, s2 Set) bool {
 }
 
 func Equal(s1, s2 Set) bool {
-	return false
+	return reflect.DeepEqual(s1, s2)
 }
 
 func Intersection(s1, s2 Set) Set {
