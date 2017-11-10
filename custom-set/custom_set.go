@@ -68,7 +68,7 @@ func (ss *Set) Has(v string) bool {
 }
 
 func (ss *Set) IsEmpty() bool {
-	return true
+	return len(*ss) == 0
 }
 
 func (ss *Set) Add(s string) {
