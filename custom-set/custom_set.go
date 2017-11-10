@@ -64,7 +64,8 @@ func (ss Set) String() string {
 }
 
 func (ss *Set) Has(v string) bool {
-	return false
+	_, has := (*ss)[v]
+	return has
 }
 
 func (ss *Set) IsEmpty() bool {
