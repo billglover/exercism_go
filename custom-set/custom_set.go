@@ -47,7 +47,15 @@ func Equal(s1, s2 Set) bool {
 }
 
 func Intersection(s1, s2 Set) Set {
-	return nil
+	is := Set{}
+
+	for k := range s1 {
+		if ok := s2[k]; ok == true {
+			is[k] = true
+		}
+	}
+
+	return is
 }
 
 func Difference(s1, s2 Set) Set {
