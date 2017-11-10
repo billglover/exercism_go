@@ -24,7 +24,12 @@ func NewFromSlice(sl []string) Set {
 }
 
 func Subset(s1, s2 Set) bool {
-	return false
+	for k := range s1 {
+		if ok := s2[k]; ok == false {
+			return false
+		}
+	}
+	return true
 }
 
 func Disjoint(s1, s2 Set) bool {
