@@ -71,7 +71,13 @@ func Difference(s1, s2 Set) Set {
 }
 
 func Union(s1, s2 Set) Set {
-	return nil
+	us := s2
+
+	for k := range s1 {
+		us[k] = true
+	}
+
+	return us
 }
 
 func (ss Set) String() string {
