@@ -14,12 +14,6 @@ type Node struct {
 	Children []*Node
 }
 
-type Mismatch struct{}
-
-func (m Mismatch) Error() string {
-	return "c"
-}
-
 func Build(records []Record) (*Node, error) {
 	if len(records) == 0 {
 		return nil, nil
@@ -82,7 +76,7 @@ func Build(records []Record) (*Node, error) {
 		todo = newTodo
 	}
 	if n != len(records) {
-		return nil, Mismatch{}
+		return nil, fmt.Errorf("c")
 	}
 	if err := chk(root, len(records)); err != nil {
 		return nil, err
