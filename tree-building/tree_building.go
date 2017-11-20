@@ -14,7 +14,53 @@ type Node struct {
 	Children []*Node
 }
 
+func (n Node) addChildren(records []Record) (Node, error) {
+	for _, r := range records {
+
+		// don't add the root node to itself
+		if r.Parent == 0 && r.ID == 0 {
+			continue
+		}
+
+		// don't add nodes that go the wrong direction
+		if r.ID < r.Parent {
+			return n, fmt.Errorf("invalid node")
+		}
+
+		if r.Parent == n.ID && r.ID > n.ID {
+
+			c, err := Node{ID: r.ID}.addChildren(records)
+			if err != nil {
+				return n, err
+			}
+
+			n.Children = append(n.Children, &c)
+		}
+	}
+	return n, nil
+}
+
 func Build(records []Record) (*Node, error) {
+
+	if len(records) == 0 {
+		return nil, nil
+	}
+
+	fmt.Println("---")
+	fmt.Printf("%+v\n", records)
+
+	tn := Node{}
+	fmt.Printf("%+v\n", tn)
+	tn, err := tn.addChildren(records)
+	fmt.Printf("%+v\n", tn)
+
+	fmt.Println(len(tn.Children), err)
+	return &tn, err
+
+	// TODO:
+	// - take node, add all relevant children
+	// - take each child, add relevant children
+	// - return when no more can be added
 
 	// return an empty tree rather than an error when we have been given
 	// no records
@@ -107,6 +153,7 @@ func Build(records []Record) (*Node, error) {
 	if err := chk(root, len(records)); err != nil {
 		return nil, err
 	}
+	fmt.Printf("%+v\n", root)
 	return root, nil
 }
 
@@ -115,8 +162,7 @@ func Build(records []Record) (*Node, error) {
 // TODO: simplify by combining the conditions
 // TODO: remove and see if we can add this check at build time
 func chk(n *Node, m int) (err error) {
-	fmt.Println(n)
-	fmt.Println(n.ID, m)
+
 	if n.ID > m {
 		return fmt.Errorf("node can't have an ID greater than the number of nodes")
 	} else if n.ID == m {
@@ -125,7 +171,6 @@ func chk(n *Node, m int) (err error) {
 		for i := 0; i < len(n.Children); i++ {
 			err = chk(n.Children[i], m)
 			if err != nil {
-				fmt.Println(n.Children[i], m, err)
 				return
 			}
 		}
