@@ -26,6 +26,12 @@ func (n Node) addChildren(records []Record, max int) (Node, error) {
 			return n, fmt.Errorf("invalid node")
 		}
 
+		// Because we have a sorted list of records, we can ignore any
+		// records with an ID greater than the current node ID.
+		if r.Parent > n.ID {
+			return n, nil
+		}
+
 		if r.Parent == n.ID {
 
 			c, err := Node{ID: r.ID}.addChildren(records[i:], max)

@@ -60,19 +60,17 @@ BenchmarkShallowTree-4                 2        1020455509 ns/op
 ### Best
 
 ```plain
-BenchmarkTwoTree-4                     1        5099513599 ns/op
-BenchmarkTenTree-4                    10         115176266 ns/op
-BenchmarkShallowTree-4                10         119970878 ns/op
+BenchmarkTwoTree-4                     1        1435500314 ns/op
+BenchmarkTenTree-4                    20          59115074 ns/op
+BenchmarkShallowTree-4                20          68591544 ns/op
 ```
 
 ### Current
 
 ```plain
-BenchmarkTwoTree-4                     1        5099513599 ns/op
-BenchmarkTenTree-4                    10         115176266 ns/op
-BenchmarkShallowTree-4                10         119970878 ns/op
+BenchmarkTwoTree-4                     1        1435500314 ns/op
+BenchmarkTenTree-4                    20          59115074 ns/op
+BenchmarkShallowTree-4                20          68591544 ns/op
 ```
 
 *TODO:*
-
-* trim the number of records passed to each iteration of the loop
