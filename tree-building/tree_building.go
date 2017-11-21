@@ -14,26 +14,21 @@ type Node struct {
 	Children []*Node
 }
 
-func (n Node) addChildren(records []Record) (Node, error) {
+func (n Node) addChildren(records []Record, max int) (Node, error) {
 	for _, r := range records {
-
-		// don't add the root node to itself
-		if r.Parent == 0 && r.ID == 0 {
-			continue
-		}
 
 		// Nodes with an ID that is less than their parent or an ID
 		// that is greater than the total number of nodes in the tree
 		// are considered invalid. Nodes with an ID equal to their
 		// parent are considered cyclical and also invalid.
 		// Note: the root node has been handled above.
-		if r.ID <= r.Parent || r.ID >= len(records) {
+		if r.ID <= r.Parent || r.ID >= max {
 			return n, fmt.Errorf("invalid node")
 		}
 
-		if r.Parent == n.ID && r.ID > n.ID {
+		if r.Parent == n.ID {
 
-			c, err := Node{ID: r.ID}.addChildren(records)
+			c, err := Node{ID: r.ID}.addChildren(records, max)
 			if err != nil {
 				return n, err
 			}
@@ -74,6 +69,6 @@ func Build(records []Record) (*Node, error) {
 	}
 
 	tn := Node{}
-	tn, err := tn.addChildren(records)
+	tn, err := tn.addChildren(records[1:], len(records))
 	return &tn, err
 }

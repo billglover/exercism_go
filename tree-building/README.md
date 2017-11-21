@@ -60,18 +60,19 @@ BenchmarkShallowTree-4                 2        1020455509 ns/op
 ### Best
 
 ```plain
-
+BenchmarkTwoTree-4                     1        5099513599 ns/op
+BenchmarkTenTree-4                    10         115176266 ns/op
+BenchmarkShallowTree-4                10         119970878 ns/op
 ```
 
 ### Current
 
 ```plain
-BenchmarkTwoTree-4                     1        5127004133 ns/op
-BenchmarkTenTree-4                    10         118585637 ns/op
-BenchmarkShallowTree-4                10         130144220 ns/op
+BenchmarkTwoTree-4                     1        5099513599 ns/op
+BenchmarkTenTree-4                    10         115176266 ns/op
+BenchmarkShallowTree-4                10         119970878 ns/op
 ```
 
 *TODO:*
 
-* handle the root node outside the recursive loop
-* trim the number of records passed to each itteration of the loop
+* trim the number of records passed to each iteration of the loop
