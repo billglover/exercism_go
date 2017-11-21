@@ -15,7 +15,7 @@ type Node struct {
 }
 
 func (n Node) addChildren(records []Record, max int) (Node, error) {
-	for _, r := range records {
+	for i, r := range records {
 
 		// Nodes with an ID that is less than their parent or an ID
 		// that is greater than the total number of nodes in the tree
@@ -28,7 +28,7 @@ func (n Node) addChildren(records []Record, max int) (Node, error) {
 
 		if r.Parent == n.ID {
 
-			c, err := Node{ID: r.ID}.addChildren(records, max)
+			c, err := Node{ID: r.ID}.addChildren(records[i:], max)
 			if err != nil {
 				return n, err
 			}
