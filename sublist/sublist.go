@@ -1,7 +1,12 @@
+// Package sublist provides a function for comparing two lists.
 package sublist
 
+// Relation describes the relationship between two lists.
 type Relation string
 
+// Sublist takes two lists and determines if the first list is contained within
+// the second list, if the second list is contained within the first list, if
+// both lists are contained within each other or if none of these are true.
 func Sublist(a, b []int) Relation {
 
 	// empty lists are regard as equal
