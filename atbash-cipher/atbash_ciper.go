@@ -4,51 +4,49 @@ import (
 	"strings"
 )
 
-var plain = []byte("abcdefghijklmnopqrstuvwxyz")
 var cipher = []byte("zyxwvutsrqponmlkjihgfedcba")
 
-// Numbers are passed through
-// Capital letters are converted to lowercase
-// Punctuation (incl. spaces) is ignored
+// Atbash takes a plain text string and returns the Atbash
+// cipher text equivalent.
+func Atbash(pt string) string {
 
-// Every fifth character should insert a space in output
+	pt = strings.ToLower(pt)
+	pb := []byte(pt)
 
-func Atbash(p string) string {
-
-	p = strings.ToLower(p)
-
-	pi := 0
+	// We make the assumption that the maximum length of the cipher
+	// text is the length of the plain text with some additional
+	// characters for padding.
+	maxlen := len(pt) + len(pt)/5 + 1
+	c := make([]byte, maxlen)
 	ci := 0
 	pad := 0
 
-	maxlen := len(p) + len(p)/5 + 1
+	for _, pchar := range pb {
 
-	c := make([]byte, maxlen)
-
-	for pi < len(p) {
-
-		pchar := p[pi]
-		switch {
-		case pchar >= '0' && pchar <= '9':
+		// If we have a digit, pass it straight through adding
+		// padding if necessary.
+		if pchar >= '0' && pchar <= '9' {
 			if ci%5 == 0 && ci > 0 {
 				c[ci+pad] = ' '
 				pad++
 			}
 			c[ci+pad] = pchar
 			ci++
-		case pchar >= 'a' && pchar <= 'z':
+			continue
+		}
+
+		// If we have a character, look-up the ciphertext
+		// equivalent adding padding if necessary.
+		if pchar >= 'a' && pchar <= 'z' {
 			if ci%5 == 0 && ci > 0 {
 				c[ci+pad] = ' '
 				pad++
 			}
 			c[ci+pad] = cipher[pchar-'a']
 			ci++
-		default:
-			pi++
 			continue
 		}
 
-		pi++
 	}
 
 	return string(c[:ci+pad])

@@ -49,4 +49,14 @@ you're having trouble, please visit the exercism.io [Go language page](http://ex
 Wikipedia [http://en.wikipedia.org/wiki/Atbash](http://en.wikipedia.org/wiki/Atbash)
 
 ## Submitting Incomplete Solutions
+
 It's possible to submit an incomplete solution so you can see how others have completed the exercise.
+
+## Benchmark
+
+```plain
+goos: darwin
+goarch: amd64
+pkg: local/exercism/go/atbash-cipher
+BenchmarkAtbash-4         500000              3059 ns/op
+```
