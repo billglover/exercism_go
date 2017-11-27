@@ -41,7 +41,11 @@ func Number(s string) (string, error) {
 
 // AreaCode returns a string representing the area code of a phone number.
 func AreaCode(s string) (string, error) {
-	return s, nil
+	n, err := Number(s)
+	if err != nil {
+		return n, err
+	}
+	return n[:3], nil
 }
 
 // Format produces a human readable representation of a phone number.
