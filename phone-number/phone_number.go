@@ -50,7 +50,11 @@ func AreaCode(s string) (string, error) {
 
 // Format produces a human readable representation of a phone number.
 func Format(s string) (string, error) {
-	return s, nil
+	n, err := Number(s)
+	if err != nil {
+		return n, err
+	}
+	return fmt.Sprintf("(%s) %s-%s", n[:3], n[3:6], n[6:]), nil
 }
 
 func clean(s string) string {
