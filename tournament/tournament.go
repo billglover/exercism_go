@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"log"
 	"sort"
 )
 
@@ -33,7 +32,7 @@ func Tally(in io.Reader, out io.Writer) error {
 
 	matches, err := r.ReadAll()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("unable to read results: %v", err)
 	}
 
 	sb := map[string]scoreCard{}
