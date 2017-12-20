@@ -25,29 +25,38 @@ func Transpose(ipt []string) []string {
 	trows := mll
 	tcols := len(ipt)
 
+	// Padding our input strings on the right is
+	// equivalent to left padding our output strings.
+	for ri := range ipt {
+		if len(ipt[ri]) != mll {
+			ipt[ri] = rightPad(ipt[ri], ' ', mll-len(ipt[ri]))
+		}
+	}
+
 	// Transpose the input text by swapping rows and cols.
 	// We also pad any lines shorter than the max line length.
-	opt := make([]string, trows)
-	for col := 0; col < tcols; col++ {
-		ipt[col] = leftPad(ipt[col], " ", mll-len(ipt[col]))
-		for row := 0; row < trows; row++ {
-			opt[row] += string(ipt[col][row])
+	out := make([]string, trows)
+	row := make([]byte, tcols)
+	for ri := 0; ri < trows; ri++ {
+		for ci := 0; ci < tcols; ci++ {
+			row[ci] = ipt[ci][ri]
 		}
+		out[ri] = string(row)
 	}
 
 	// Trim trailing space from the final row.
 	if trows != 0 {
-		opt[trows-1] = strings.TrimRight(opt[trows-1], " ")
+		out[trows-1] = strings.TrimRight(out[trows-1], " ")
 	}
 
-	return opt
+	return out
 }
 
-// LeftPad pads a string `s` with `n` times character `p`.
-func leftPad(s, p string, n int) string {
-	out := ""
-	for i := 0; i < n; i++ {
-		out += p
+// RightPad pads a string `s` with `n` times character `p`.
+func rightPad(s string, p byte, n int) string {
+	pad := make([]byte, n)
+	for i := range pad {
+		pad[i] = p
 	}
-	return s + out
+	return s + string(pad)
 }
