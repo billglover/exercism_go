@@ -84,5 +84,5 @@ func bottles(b int) string {
 		return "no more bottles"
 	}
 
-	return strconv.Itoa(b) + "bottles"
+	return strconv.Itoa(b) + " bottles"
 }
