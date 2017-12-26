@@ -5,9 +5,10 @@
 package beer
 
 import (
+	"bytes"
 	"fmt"
 	"strconv"
-	"unicode"
+	"strings"
 )
 
 // Song returns the beer song.
@@ -19,20 +20,21 @@ func Song() string {
 // Verses returns a range of verses from the beer song.
 func Verses(v1, v2 int) (string, error) {
 
-	if v1 < v2 {
+	if v1 < v2 || v1 > 99 || v2 < 0 {
 		return "", fmt.Errorf("invalid range: %d < %d", v1, v2)
 	}
 
-	vs := ""
+	var buffer bytes.Buffer
 	for v := v1; v >= v2; v-- {
 		cv, err := Verse(v)
 		if err != nil {
-			return vs, err
+			return "", err
 		}
-		vs += cv + "\n"
+		buffer.WriteString(cv)
+		buffer.WriteString("\n")
 	}
 
-	return vs, nil
+	return buffer.String(), nil
 }
 
 // Verse returns a single verse from the beer song.
@@ -41,40 +43,46 @@ func Verse(v int) (string, error) {
 		return "", fmt.Errorf("invalid verse: %d is not in the range [0,100]", v)
 	}
 
-	cur, q := bottles(v)
-	next, _ := bottles(v - 1)
-	v1 := fmt.Sprintf("%[1]s of beer on the wall, %[1]s of beer.", cur)
-	v2 := fmt.Sprintf("Take %s down and pass it around, %s of beer on the wall.", q, next)
+	var buffer bytes.Buffer
 
-	// The last verse is a special case so handle this as an exception.
+	// generate the first line of the verse
+	b := bottles(v)
+	buffer.WriteString(strings.ToUpper(string(b[0])))
+	buffer.WriteString(b[1:])
+	buffer.WriteString(" of beer on the wall, ")
+	buffer.WriteString(b)
+	buffer.WriteString(" of beer.\n")
+
+	// generate the second line of the verse
 	if v == 0 {
-		v2 = fmt.Sprintf("Go to the store and buy some more, %s of beer on the wall.", next)
+		buffer.WriteString("Go to the store and buy some more, 99 bottles of beer on the wall.\n")
+		return buffer.String(), nil
 	}
 
-	// Capitalise the first letter of the verse. We use `unicode.ToUpper` as we don't
-	// make any assumptions around the character set used in the verse.
-	v1r := []rune(v1)
-	v1r[0] = unicode.ToUpper(v1r[0])
-	v1 = string(v1r)
+	q := "one"
+	if v == 1 {
+		q = "it"
+	}
+	b = bottles(v - 1)
 
-	// Return the verse along with a trailing new-line character.
-	return v1 + "\n" + v2 + "\n", nil
+	buffer.WriteString("Take ")
+	buffer.WriteString(q)
+	buffer.WriteString(" down and pass it around, ")
+	buffer.WriteString(b)
+	buffer.WriteString(" of beer on the wall.\n")
+
+	return buffer.String(), nil
 }
 
 // Bottles is a helper function that takes a number of bottles and returns the correctly
 // pluralised form along with a quantification string.
-func bottles(b int) (cur, q string) {
-	switch b {
-	case 1:
-		cur = "1 bottle"
-		q = "it"
-	case 0:
-		cur = "no more bottles"
-	case -1:
-		cur = "99 bottles"
-	default:
-		cur = strconv.Itoa(b) + " bottles"
-		q = "one"
+func bottles(b int) string {
+	if b == 1 {
+		return "1 bottle"
 	}
-	return cur, q
+	if b == 0 {
+		return "no more bottles"
+	}
+
+	return strconv.Itoa(b) + "bottles"
 }
