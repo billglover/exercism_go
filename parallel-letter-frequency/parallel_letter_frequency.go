@@ -1,25 +1,36 @@
+//Package letter calculaes the letter frequency in a given set of strings
 package letter
+
+import "sync"
 
 const testVersion = 1
 
 // ConcurrentFrequency takes a slice of strings and calculates the frequency
 // of runes within the strings.
 func ConcurrentFrequency(strings []string) FreqMap {
+	fMap := FreqMap{}
+	rChan := make(chan FreqMap, len(strings))
 
-	m := FreqMap{}
-	results := make(chan FreqMap, len(strings))
+	var wg sync.WaitGroup
+	wg.Add(len(strings))
 
-	for _, part := range strings {
+	for _, item := range strings {
 		go func(s string) {
-			results <- Frequency(s)
-		}(part)
+			defer wg.Done()
+			rChan <- Frequency(s)
+		}(item)
 	}
 
-	for r := len(strings); r > 0; r-- {
-		f := <-results
+	go func() {
+		wg.Wait()
+		close(rChan)
+	}()
+
+	for f := range rChan {
 		for l := range f {
-			m[l] += f[l]
+			fMap[l] += f[l]
 		}
 	}
-	return m
+
+	return fMap
 }
