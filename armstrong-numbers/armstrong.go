@@ -1,7 +1,5 @@
 package armstrong
 
-import "strconv"
-
 // IsNumber returns true if a number is an armstrong number
 func IsNumber(n int) bool {
 
@@ -10,10 +8,16 @@ func IsNumber(n int) bool {
 		return true
 	}
 
-	l := len(strconv.Itoa(n))
 	sum := 0
-
 	i := n
+
+	l := 0
+	for i > 0 {
+		l++
+		i /= 10
+	}
+	i = n
+
 	for i > 0 {
 		sum += exp(i%10, l)
 		i /= 10
